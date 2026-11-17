@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пара — дневник и календарь для двоих</title>
+<meta name="description" content="Пара — приложение для влюблённых на Android: считайте дни вместе, отмечайте встречи с фото, растите сад любви и делитесь общим дневником на двух телефонах.">
+<meta property="og:title" content="Пара — дневник и календарь для двоих">
+<meta property="og:description" content="Считайте дни вместе, отмечайте встречи, растите сад любви. Бесплатно, без рекламы.">
+<meta property="og:image" content="icon-512.png">
+<meta name="theme-color" content="#d98195">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Lora:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff7f9;
+    --bg-alt: #fdeef3;
+    --card: #ffffff;
+    --text: #4b3a55;
+    --muted: #8a7792;
+    --rose: #ffb6c8;
+    --lav: #e6d9f2;
+    --accent: #d98195;
+    --accent-deep: #b8607a;
+    --line: #f1dde5;
+    --phone: #2b2230;
+    --shadow: 0 30px 60px -25px rgba(184, 96, 122, .45);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1620;
+      --bg-alt: #241c29;
+      --card: #2c2332;
+      --text: #f3e8ef;
+      --muted: #b9a6bd;
+      --rose: #e48aa3;
+      --lav: #5a4870;
+      --accent: #f09ab0;
+      --accent-deep: #f6b7c7;
+      --line: #3a2e40;
+      --phone: #0e0a10;
+      --shadow: 0 30px 60px -25px rgba(0, 0, 0, .7);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-deep); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- шапка ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border-bottom: 1px solid var(--line);
+  }
+  header.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  header.top img { width: 34px; height: 34px; border-radius: 10px; }
+  header.top b { font-size: 19px; letter-spacing: .2px; }
+  header.top nav { margin-left: auto; display: flex; gap: 20px; font-weight: 600; font-size: 15px; }
+  header.top nav a { color: var(--text); text-decoration: none; opacity: .8; }
+  header.top nav a:hover { opacity: 1; color: var(--accent-deep); }
+  @media (max-width: 640px) { header.top nav a:not(.dl) { display: none; } }
+
+  /* ---------- первый экран ---------- */
+  .hero {
+    padding: 64px 0 40px;
+    background:
+      radial-gradient(600px 400px at 85% 10%, color-mix(in srgb, var(--lav) 80%, transparent), transparent 70%),
+      radial-gradient(500px 380px at 10% 90%, color-mix(in srgb, var(--rose) 45%, transparent), transparent 70%);
+  }
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 64px); line-height: 1.05; margin: 0 0 18px; font-weight: 800;
+  }
+  .hero h1 em { font-family: "Lora", serif; font-weight: 500; color: var(--accent); }
+  .hero p.lead { font-size: 19px; color: var(--muted); margin: 0 0 28px; max-width: 30em; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .badge {
+    font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--line); color: var(--muted);
+  }
+  @media (max-width: 820px) {
+    .hero .wrap { grid-template-columns: 1fr; text-align: center; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .badges, .cta { justify-content: center; }
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    color: #fff; text-decoration: none; font-weight: 800; font-size: 17px;
+    padding: 15px 26px; border-radius: 16px; box-shadow: var(--shadow);
+    transition: transform .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn svg { width: 22px; height: 22px; }
+  .btn-sub { font-size: 14px; color: var(--muted); }
+
+  /* ---------- телефон ---------- */
+  .phone {
+    width: 280px; aspect-ratio: 9 / 19; margin: 0 auto;
+    background: var(--phone); border-radius: 42px; padding: 11px;
+    box-shadow: var(--shadow), inset 0 0 0 2px rgba(255,255,255,.06);
+    position: relative;
+  }
+  .phone::before {
+    content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 18px; background: var(--phone); border-radius: 12px; z-index: 2;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 32px; overflow: hidden;
+    background: #fff0f3; color: #5d4a66; position: relative;
+    font-size: 11px; display: flex; flex-direction: column;
+  }
+  .sb { height: 38px; flex: none; }
+  .appbar { padding: 0 16px 8px; font-weight: 800; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+  .appbar span { opacity: .55; font-size: 13px; letter-spacing: 3px; }
+  .s-body { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
+  .s-card { background: #fff; border-radius: 16px; padding: 10px 12px; box-shadow: 0 4px 14px -8px rgba(217,129,149,.5); }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .av { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; flex: none; }
+  .av + .av { margin-left: -12px; }
+  .big { font-size: 24px; font-weight: 800; line-height: 1; }
+  .cap { font-size: 9px; opacity: .7; }
+  .bar { height: 6px; border-radius: 4px; background: #fbe3ea; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: #d98195; border-radius: 4px; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; font-size: 9px; }
+  .cal b { font-weight: 700; opacity: .5; }
+  .cal span { height: 20px; display: grid; place-items: center; border-radius: 50%; position: relative; }
+  .cal .m::after { content: "♥"; position: absolute; bottom: -3px; font-size: 7px; color: #d98195; }
+  .cal .t { background: linear-gradient(135deg, #ffb6c8, #e6d9f2); font-weight: 800; }
+  .cal .p::after { content: "★"; position: absolute; bottom: -3px; font-size: 7px; color: #a98bd6; }
+  .pill { display: block; text-align: center; padding: 9px; border-radius: 12px; background: #d98195; color: #fff; font-weight: 800; }
+  .units { display: flex; justify-content: space-around; text-align: center; }
+  .units .big { color: #d98195; font-size: 20px; }
+  .sw { width: 26px; height: 26px; border-radius: 50%; display: block; outline-offset: 2px; }
+  .set { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; }
+  .tg { width: 28px; height: 16px; border-radius: 8px; background: #e7d6de; position: relative; display: block; }
+  .tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+  .tg.on { background: #d98195; }
+  .tg.on::after { left: 14px; }
+
+  /* ---------- разделы функций ---------- */
+  section.feat { padding: 56px 0; }
+  section.feat:nth-of-type(even) { background: var(--bg-alt); }
+  .feat .wrap { max-width: 760px; }
+  .feat h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 0 0 14px; font-weight: 800; }
+  .feat .kicker { color: var(--accent); font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .feat p { font-size: 17px; color: var(--muted); margin: 0 0 14px; }
+  .feat ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 24px; }
+  .feat li { padding-left: 28px; position: relative; font-size: 16px; }
+  .feat li::before { content: "♥"; position: absolute; left: 4px; color: var(--accent); }
+
+  /* ---------- сетка мелких функций ---------- */
+  .grid-sec { padding: 72px 0; }
+  .grid-sec h2 { text-align: center; font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; }
+  .grid-sec .sub { text-align: center; color: var(--muted); margin: 0 0 36px; font-size: 17px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+  .tile .ic { font-size: 28px; }
+  .tile h3 { margin: 8px 0 4px; font-size: 17px; }
+  .tile p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* ---------- установка ---------- */
+  .install { padding: 72px 0 88px; text-align: center;
+    background: radial-gradient(700px 360px at 50% 0%, color-mix(in srgb, var(--lav) 70%, transparent), transparent 70%); }
+  .install h2 { font-size: clamp(30px, 4.5vw, 44px); margin: 0 0 10px; }
+  .install .sub { color: var(--muted); font-size: 17px; margin: 0 0 30px; }
+  .steps { max-width: 640px; margin: 40px auto 0; text-align: left; display: grid; gap: 12px; counter-reset: s; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 18px 14px 58px; position: relative; }
+  .step::before {
+    counter-increment: s; content: counter(s);
+    position: absolute; left: 16px; top: 13px; width: 28px; height: 28px; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 800; color: #fff; background: var(--accent);
+  }
+  .install .cta { justify-content: center; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  .float { animation: float 6s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce) { .float { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="icon-192.png" alt="">
+    <b>Пара</b>
+    <nav>
+      <a href="#features">Возможности</a>
+      <a href="#pair">Вдвоём</a>
+      <a class="dl" href="#install">Скачать</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ первый экран ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Ваша история<br><em>день за днём</em></h1>
+      <p class="lead">Пара — тёплый дневник и календарь для влюблённых. Считайте дни вместе, отмечайте встречи с фото, растите сад любви и ведите общий дневник на двух телефонах.</p>
+      <div class="cta">
+        <a class="btn" href="https://github.com/lagushka594/para/releases/latest/download/Para.apk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></svg>
+          Скачать для Android
+        </a>
+        <span class="btn-sub" id="apk-size">APK · Android 7.0 и новее</span>
+      </div>
+      <div class="badges">
+        <span class="badge">Бесплатно</span>
+        <span class="badge">Без рекламы</span>
+        <span class="badge">Русский и English</span>
+        <span class="badge">Тёмная тема</span>
+      </div>
+    </div>
+
+    <!-- макет экрана настроек -->
+    <div class="float" aria-hidden="true">
+      <div class="phone"><div class="screen">
+        <div class="sb"></div>
+        <div class="appbar">Настройки</div>
+        <div class="s-body">
+          <div class="s-card">
+            <b>Тема оформления</b>
+            <div class="row" style="gap:7px;margin-top:8px">
+              <i class="sw" style="background:linear-gradient(135deg,#ffb6c8,#e6d9f2);outline:2px solid #d98195"></i>
+              <i class="sw" style="background:linear-gradient(135deg,#a8e6cf,#d6eef7)"></i>
+              <i class="sw" style="background:linear-gradient(135deg,#cdb8f5,#ead9f7)"></i>
+              <i class="sw" style="background:linear-gradient(135deg,#ffc09a,#ffd6de)"></i>
+              <i class="sw" style="background:linear-gradient(135deg,#a9d2f5,#d9e4fa)"></i>
+            </div>
+          </div>
+          <div class="s-card set"><span>🌍 Язык</span><b>Русский ▾</b></div>
+          <div class="s-card set"><span>🔒 Вход по PIN-коду</span><i class="tg on"></i></div>
+          <div class="s-card set"><span>👆 Отпечаток / лицо</span><i class="tg on"></i></div>
+          <div class="s-card set"><span>🦇 Тёмная тема</span><i class="tg"></i></div>
+          <div class="s-card set"><span>🔥 Предупреждение о серии</span><i class="tg on"></i></div>
+          <div class="s-card set"><span>💌 Случайный комплимент</span><i class="tg on"></i></div>
+          <div class="s-card set"><span>👫 Режим пары</span><b style="color:#4daa8c">вкл.</b></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<span id="features"></span>
+
+<!-- ============ встречи ============ -->
+<section class="feat">
+  <div class="wrap">
+    <div class="text">
+      <div class="kicker">Календарь встреч</div>
+      <h2>Каждая встреча — в вашей истории</h2>
+      <p>Одно касание — и день отмечен сердечком. Добавьте к встрече до шести фото, заметку, настроение, теги и место на карте.</p>
+      <ul>
+        <li>Счётчик дней вместе и серия встреч подряд</li>
+        <li>Звания пары: от «Новичков» до «Легенды»</li>
+        <li>Дневник с поиском по заметкам, тегам и датам</li>
+        <li>Экспорт дневника в красивый PDF</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ режим пары ============ -->
+<section class="feat flip" id="pair">
+  <div class="wrap">
+    <div class="text">
+      <div class="kicker">Режим пары</div>
+      <h2>Один дневник на два телефона</h2>
+      <p>Создайте пару и отправьте партнёру код из шести символов. Встречи, планы, особые даты и списки желаний станут общими: отметил один — видят оба.</p>
+      <ul>
+        <li>Без регистрации и паролей — только код</li>
+        <li>Работает и без интернета, синхронизируется позже</li>
+        <li>Оба отметили один день — запись будет одна</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ сад ============ -->
+<section class="feat">
+  <div class="wrap">
+    <div class="text">
+      <div class="kicker">Сад любви</div>
+      <h2>Сад, который растёт вместе с вами</h2>
+      <p>Каждая встреча сажает новый цветок, а длинная серия раскрывает бутон и зовёт светлячков. Меняются времена года, а за каждый подаренный подарок прилетает бабочка.</p>
+      <ul>
+        <li>Цвет цветка зависит от настроения встречи</li>
+        <li>Поливайте сад каждый день — без воды он грустит</li>
+        <li>Зимой идёт снег, весной кружат лепестки</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ желания ============ -->
+<section class="feat flip">
+  <div class="wrap">
+    <div class="text">
+      <div class="kicker">Список желаний</div>
+      <h2>Подарки, которые точно понравятся</h2>
+      <p>Ведите списки желаний — свой и партнёра. В чужом списке можно тайно нажать «Я подарю»: ваша половинка этого не увидит, а сюрприз останется сюрпризом.</p>
+      <ul>
+        <li>Ссылки, размеры и цвета прямо в карточке</li>
+        <li>Подаренное отмечается и уходит вниз</li>
+        <li>Подсказки праздников: 14 февраля, 8 марта, годовщины</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ итоги года ============ -->
+<section class="feat">
+  <div class="wrap">
+    <div class="text">
+      <div class="kicker">Наш год</div>
+      <h2>Итоги, которыми хочется поделиться</h2>
+      <p>В конце месяца и года Пара собирает вашу историю в красивые слайды: сколько встреч, самая длинная серия, любимый формат свиданий и новые места. Каждый слайд — готовая картинка для сторис.</p>
+      <ul>
+        <li>Итоги месяца и «Наш год»</li>
+        <li>Карточки «742 дня вместе» и нового звания</li>
+        <li>Фоторамка с датой для совместных снимков</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ещё возможности ============ -->
+<section class="grid-sec">
+  <div class="wrap">
+    <h2>И ещё много тёплого</h2>
+    <p class="sub">Всё, чтобы не забывать важное и радовать друг друга</p>
+    <div class="tiles">
+      <div class="tile"><div class="ic">⏳</div><h3>Отсчёт до встречи</h3><p>Дни, часы и минуты до следующего свидания — особенно ценно на расстоянии.</p></div>
+      <div class="tile"><div class="ic">🎂</div><h3>Годовщины и особые даты</h3><p>Напоминания о днях рождения, годовщинах и «круглых» датах вроде 1000 дней вместе.</p></div>
+      <div class="tile"><div class="ic">📱</div><h3>Виджеты</h3><p>Три виджета на рабочий стол: дни вместе, серия и последнее фото со встречи.</p></div>
+      <div class="tile"><div class="ic">⚡</div><h3>Быстрая отметка</h3><p>«Мы виделись сегодня» — по долгому нажатию на иконку или кнопкой прямо в уведомлении.</p></div>
+      <div class="tile"><div class="ic">💌</div><h3>Комплименты</h3><p>Тёплые фразы в случайное время дня. Свои фразы можно добавить самим.</p></div>
+      <div class="tile"><div class="ic">🔥</div><h3>Серия под угрозой</h3><p>Вечером напомним, если сегодня ещё не виделись, — чтобы серия не сгорела.</p></div>
+      <div class="tile"><div class="ic">🕊</div><h3>Ссоры и примирения</h3><p>Отмечайте ссоры и мир, смотрите рекорд спокойных дней и что помогает мириться.</p></div>
+      <div class="tile"><div class="ic">✉️</div><h3>Капсула времени</h3><p>Напишите письмо себе или партнёру и запечатайте его до особой даты.</p></div>
+      <div class="tile"><div class="ic">🗺️</div><h3>Карта встреч</h3><p>Все места, где вы были вместе, на одной карте.</p></div>
+      <div class="tile"><div class="ic">🔒</div><h3>PIN и отпечаток</h3><p>Дневник откроется только вам: PIN-код или вход по отпечатку пальца.</p></div>
+      <div class="tile"><div class="ic">🎨</div><h3>Пять тем и тёмный режим</h3><p>Роза, мята, лаванда, закат и океан — и тёмная тема «вампирский роман».</p></div>
+      <div class="tile"><div class="ic">🌍</div><h3>Русский и English</h3><p>Язык переключается в настройках, вместе с календарём и датами.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ установка ============ -->
+<section class="install" id="install">
+  <div class="wrap">
+    <h2>Скачайте Пару</h2>
+    <p class="sub">Бесплатно и без рекламы. Для телефонов на Android 7.0 и новее.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/lagushka594/para/releases/latest/download/Para.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></svg>
+        Скачать APK
+      </a>
+    </div>
+    <div class="steps">
+      <div class="step">Нажмите «Скачать APK» на телефоне и откройте загруженный файл.</div>
+      <div class="step">Если Android спросит, разрешите установку из этого источника (браузера или «Файлов»).</div>
+      <div class="step">Нажмите «Установить», откройте Пару и введите ваши имена и дату знакомства.</div>
+      <div class="step">Хотите общий дневник? Меню «⋮» → «Режим пары» → «Создать пару» и отправьте код партнёру.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Пара · сделано с любовью 💞 · <a href="https://github.com/lagushka594/para/releases">все версии</a></div>
+</footer>
+
+</body>
+</html>
