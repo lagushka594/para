@@ -189,6 +189,22 @@
   }
   .install .cta { justify-content: center; }
 
+  .qr { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 28px auto 0; max-width: 520px; text-align: left; }
+  .qr img { border-radius: 16px; background: #fff; padding: 6px; border: 1px solid var(--line); flex: none; }
+  .qr p { margin: 0; color: var(--muted); font-size: 15px; }
+  /* на телефоне QR не нужен — кнопка «Скачать» уже под рукой */
+  @media (max-width: 640px), (pointer: coarse) { .qr { display: none; } }
+
+  .news { padding: 64px 0; background: var(--bg-alt); }
+  .news h2 { text-align: center; font-size: clamp(28px, 4vw, 40px); margin: 0 0 24px; }
+  .news #releases { max-width: 720px; margin: 0 auto; display: grid; gap: 14px; }
+  .release { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; }
+  .release h3 { margin: 0 0 6px; font-size: 18px; }
+  .release p { margin: 0 0 6px; }
+  .release ul { margin: 0; padding-left: 20px; }
+  .release li { margin: 2px 0; }
+  .muted { color: var(--muted); font-weight: 400; font-size: 14px; }
+
   footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; text-align: center; }
 
   .float { animation: float 6s ease-in-out infinite; }
@@ -205,6 +221,7 @@
     <nav>
       <a href="#features">Возможности</a>
       <a href="#pair">Вдвоём</a>
+      <a href="#news">Что нового</a>
       <a class="dl" href="#install">Скачать</a>
     </nav>
   </div>
@@ -289,6 +306,9 @@
       <p>Создайте пару и отправьте партнёру код из шести символов. Встречи, планы, особые даты и списки желаний станут общими: отметил один — видят оба.</p>
       <ul>
         <li>Без регистрации и паролей — только код</li>
+        <li>Вопрос дня: ответ партнёра откроется, когда ответите сами</li>
+        <li>Расстояние между вами и время на часах партнёра</li>
+        <li>Совместный таймер — сразу на двух телефонах</li>
         <li>Работает и без интернета, синхронизируется позже</li>
         <li>Оба отметили один день — запись будет одна</li>
       </ul>
@@ -306,6 +326,7 @@
       <ul>
         <li>Цвет цветка зависит от настроения встречи</li>
         <li>Поливайте сад каждый день — без воды он грустит</li>
+        <li>Полили оба в один день — расцветает редкий золотой цветок</li>
         <li>Зимой идёт снег, весной кружат лепестки</li>
       </ul>
     </div>
@@ -356,6 +377,8 @@
       <div class="tile"><div class="ic">⚡</div><h3>Быстрая отметка</h3><p>«Мы виделись сегодня» — по долгому нажатию на иконку или кнопкой прямо в уведомлении.</p></div>
       <div class="tile"><div class="ic">💌</div><h3>Комплименты</h3><p>Тёплые фразы в случайное время дня. Свои фразы можно добавить самим.</p></div>
       <div class="tile"><div class="ic">🔥</div><h3>Серия под угрозой</h3><p>Вечером напомним, если сегодня ещё не виделись, — чтобы серия не сгорела.</p></div>
+      <div class="tile"><div class="ic">🧊</div><h3>Заморозка серии</h3><p>Не получилось увидеться? Раз в месяц можно заморозить пропущенный день — серия сохранится.</p></div>
+      <div class="tile"><div class="ic">🔄</div><h3>Обновления</h3><p>Приложение само сообщит о новой версии и предложит скачать её — данные сохранятся.</p></div>
       <div class="tile"><div class="ic">🕊</div><h3>Ссоры и примирения</h3><p>Отмечайте ссоры и мир, смотрите рекорд спокойных дней и что помогает мириться.</p></div>
       <div class="tile"><div class="ic">✉️</div><h3>Капсула времени</h3><p>Напишите письмо себе или партнёру и запечатайте его до особой даты.</p></div>
       <div class="tile"><div class="ic">🗺️</div><h3>Карта встреч</h3><p>Все места, где вы были вместе, на одной карте.</p></div>
@@ -377,6 +400,10 @@
         Скачать APK
       </a>
     </div>
+    <div class="qr">
+      <img src="qr.svg" width="150" height="150" alt="QR-код со ссылкой на скачивание">
+      <p>Открыли сайт на компьютере?<br>Наведите камеру телефона на код — загрузка начнётся сразу.</p>
+    </div>
     <div class="steps">
       <div class="step">Нажмите «Скачать APK» на телефоне и откройте загруженный файл.</div>
       <div class="step">Если Android спросит, разрешите установку из этого источника (браузера или «Файлов»).</div>
@@ -386,9 +413,60 @@
   </div>
 </section>
 
+<!-- ============ что нового ============ -->
+<section class="news" id="news">
+  <div class="wrap">
+    <h2>Что нового</h2>
+    <div id="releases"><p class="muted">Загружаем список версий…</p></div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">Пара · сделано с любовью 💞 · <a href="https://github.com/lagushka594/para/releases">все версии</a></div>
 </footer>
+
+<script>
+  // «Что нового» — описания релизов с GitHub. Текст релизов выводим
+  // через textContent, без innerHTML, чтобы не исполнять чужую разметку.
+  (async function () {
+    const box = document.getElementById('releases');
+    try {
+      const res = await fetch('https://api.github.com/repos/lagushka594/para/releases?per_page=5');
+      if (!res.ok) throw new Error(res.status);
+      const releases = await res.json();
+      box.textContent = '';
+      for (const r of releases) {
+        const card = document.createElement('article');
+        card.className = 'release';
+        const h = document.createElement('h3');
+        h.textContent = r.name || r.tag_name;
+        const date = document.createElement('span');
+        date.className = 'muted';
+        date.textContent = ' · ' + new Date(r.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        h.appendChild(date);
+        card.appendChild(h);
+        const ul = document.createElement('ul');
+        let intro = '';
+        for (const line of (r.body || '').split(/\r?\n/)) {
+          const t = line.trim();
+          if (t.startsWith('- ') || t.startsWith('* ')) {
+            const li = document.createElement('li');
+            li.textContent = t.slice(2);
+            ul.appendChild(li);
+          } else if (t && !ul.children.length) {
+            intro += (intro ? ' ' : '') + t;
+          }
+        }
+        if (intro) { const p = document.createElement('p'); p.textContent = intro; card.appendChild(p); }
+        if (ul.children.length) card.appendChild(ul);
+        box.appendChild(card);
+      }
+      if (!releases.length) box.innerHTML = '<p class="muted">Пока нет опубликованных версий.</p>';
+    } catch (e) {
+      box.innerHTML = '<p class="muted">Не удалось загрузить список. <a href="https://github.com/lagushka594/para/releases">Все версии на GitHub</a></p>';
+    }
+  })();
+</script>
 
 </body>
 </html>
